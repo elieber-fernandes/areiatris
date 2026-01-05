@@ -1,8 +1,8 @@
-# Areiatris ⏳🟥🟦🟩
+# ThalyTETRIS ⏳🟥🟦🟩
 
-**Areiatris** é uma releitura moderna do clássico Tetris, mas com um toque de física: os blocos se transformam em **areia** ao tocar o chão!
+**ThalyTETRIS** é uma releitura moderna do clássico Tetris, mas com um toque de física: os blocos se transformam em **areia** ao tocar o chão!
 
-![Areiatris Gameplay](https://via.placeholder.com/800x400?text=Gameplay+Screenshot+Here)
+![ThalyTETRIS Gameplay](https://via.placeholder.com/800x400?text=ThalyTETRIS+Gameplay)
 
 ## 🎮 Como Jogar
 
@@ -15,10 +15,10 @@ Diferente do Tetris tradicional, você não precisa preencher uma linha inteira 
 
 | Ação | Teclado (PC) | Mobile (Toque) |
 | :--- | :---: | :---: |
-| **Mover** | Setas ⬅️ ➡️ | Botões ◀ ▶ ou Deslizar |
-| **Girar** | Seta ⬆️ | Botão ↻ ou Toque na tela |
-| **Descer** | Seta ⬇️ | Botão ▼ ou Deslizar p/ baixo |
-| **Tela Cheia** | - | Botão "Tela Cheia" |
+| **Mover** | Setas ⬅️ ➡️ | Deslizar p/ Esquerda/Direita |
+| **Girar** | Seta ⬆️ | Toque na tela |
+| **Descer** | Seta ⬇️ | Deslizar p/ baixo |
+| **Tela Cheia** | - | Automático ao iniciar |
 
 ## 🚀 Modos de Jogo
 
@@ -45,7 +45,7 @@ Este é um projeto estático. Para jogar:
 1.  Clone o repositório.
 2.  Abra o arquivo `index.html` no seu navegador.
 
-Ou acesse a versão online em: [Link do GitHub Pages ou Vercel]
+Ou acesse a versão online em: [(https://thalytris.vercel.app/)]
 
 ---
 Desenvolvido por Elieber Fernandes Martins.
