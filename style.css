@@ -16,10 +16,18 @@ body {
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
 }
 
-canvas {
+canvas#gameCanvas {
     background: #000;
     border: 2px solid #444;
     display: block;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    /* Responsive resizing */
+    width: 100%;
+    max-width: 480px;
+    /* Prevent it from getting too huge on desktop */
+    height: auto;
+    image-rendering: pixelated;
+    /* Keep sand crisp when scaled */
 }
 
 .overlay {

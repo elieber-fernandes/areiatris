@@ -77,7 +77,7 @@ class Game {
         this.touchStartY = 0;
         this.lastTouchX = 0;
         this.lastTouchY = 0;
-        this.touchThreshold = 20; // Minimum movement for swipe
+        this.touchThreshold = 10; // Increased sensitivity (lower value = more sensitive)
 
         this.bindEvents();
     }
@@ -484,12 +484,12 @@ class Game {
             });
         }
 
-        // Check if restart button exists (it might be recreated)
+        // Check if restart button exists
         const restartBtn = document.getElementById('restart-btn');
         if (restartBtn) {
             restartBtn.addEventListener('click', () => {
                 document.getElementById('game-over-screen').classList.add('hidden');
-                document.getElementById('start-screen').classList.remove('hidden'); // Go back to menu
+                document.getElementById('start-screen').classList.remove('hidden');
             });
         }
 
@@ -498,40 +498,46 @@ class Game {
         this.canvas.addEventListener('touchmove', (e) => this.handleTouchMove(e), { passive: false });
         this.canvas.addEventListener('touchend', (e) => this.handleTouchEnd(e), { passive: false });
 
-        // On-Screen Buttons
-        const bindBtn = (id, action) => {
+        // On-Screen Buttons with Continuous Press
+        const bindContinuousBtn = (id, action, intervalSpeed = 100) => {
             const btn = document.getElementById(id);
             if (btn) {
-                // Support both touch and click for hybrid use
+                let interval;
+                const startAction = (e) => {
+                    if (e.cancelable) e.preventDefault();
+                    action(); // Trigger once immediately
+                    clearInterval(interval); // Safety clear
+                    interval = setInterval(action, intervalSpeed);
+                };
+                const stopAction = (e) => {
+                    if (e.cancelable) e.preventDefault();
+                    clearInterval(interval);
+                };
+
+                // Touch events
+                btn.addEventListener('touchstart', startAction, { passive: false });
+                btn.addEventListener('touchend', stopAction, { passive: false });
+
+                // Mouse events
+                btn.addEventListener('mousedown', startAction);
+                btn.addEventListener('mouseup', stopAction);
+                btn.addEventListener('mouseleave', stopAction);
+            }
+        };
+
+        // Simple tap for Rotate
+        const bindTapBtn = (id, action) => {
+            const btn = document.getElementById(id);
+            if (btn) {
                 btn.addEventListener('touchstart', (e) => { e.preventDefault(); action(); }, { passive: false });
                 btn.addEventListener('mousedown', (e) => { e.preventDefault(); action(); });
             }
         };
 
-        bindBtn('btn-left', () => this.movePiece(-1, 0));
-        bindBtn('btn-right', () => this.movePiece(1, 0));
-        bindBtn('btn-rotate', () => this.rotatePiece());
-
-        // Continuous drop for down button
-        const btnDown = document.getElementById('btn-down');
-        if (btnDown) {
-            let downInterval;
-            const startDrop = (e) => {
-                e.preventDefault();
-                this.movePiece(0, 1); // Immediate move
-                downInterval = setInterval(() => this.movePiece(0, 1), 100); // Fast drop
-            };
-            const stopDrop = (e) => {
-                e.preventDefault();
-                clearInterval(downInterval);
-            };
-
-            btnDown.addEventListener('touchstart', startDrop, { passive: false });
-            btnDown.addEventListener('touchend', stopDrop, { passive: false });
-            btnDown.addEventListener('mousedown', startDrop);
-            btnDown.addEventListener('mouseup', stopDrop);
-            btnDown.addEventListener('mouseleave', stopDrop);
-        }
+        bindContinuousBtn('btn-left', () => this.movePiece(-1, 0), 100);
+        bindContinuousBtn('btn-right', () => this.movePiece(1, 0), 100);
+        bindContinuousBtn('btn-down', () => this.movePiece(0, 1), 50); // Faster drop
+        bindTapBtn('btn-rotate', () => this.rotatePiece());
     }
 
     loop() {
