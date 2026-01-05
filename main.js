@@ -502,10 +502,25 @@ class Game {
             });
         }
 
-        // Touch Listeners on Canvas
-        this.canvas.addEventListener('touchstart', (e) => this.handleTouchStart(e), { passive: false });
-        this.canvas.addEventListener('touchmove', (e) => this.handleTouchMove(e), { passive: false });
-        this.canvas.addEventListener('touchend', (e) => this.handleTouchEnd(e), { passive: false });
+        // Touch Listeners on Document (Full Screen Control)
+        document.addEventListener('touchstart', (e) => {
+            // Only handle game touches if target is not a button
+            if (e.target.tagName !== 'BUTTON' && this.isPlaying) {
+                this.handleTouchStart(e);
+            }
+        }, { passive: false });
+
+        document.addEventListener('touchmove', (e) => {
+            if (this.isPlaying) {
+                this.handleTouchMove(e);
+            }
+        }, { passive: false });
+
+        document.addEventListener('touchend', (e) => {
+            if (this.isPlaying) {
+                this.handleTouchEnd(e);
+            }
+        }, { passive: false });
     }
 
     toggleFullscreen() {
