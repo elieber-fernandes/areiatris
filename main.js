@@ -417,6 +417,12 @@ class Game {
         this.touchStartY = touch.clientY;
         this.lastTouchX = touch.clientX;
         this.lastTouchY = touch.clientY;
+
+        // Long Press to Hard Drop
+        this.longPressTimer = setTimeout(() => {
+            this.hardDrop();
+            this.longPressTimer = null; // Prevent tap after drop
+        }, 400); // 400ms hold time
     }
 
     handleTouchMove(e) {
@@ -426,6 +432,12 @@ class Game {
         const dx = touch.clientX - this.lastTouchX;
         const dy = touch.clientY - this.lastTouchY;
 
+        // Cancel long press if moved significantly
+        if (this.longPressTimer && (Math.abs(touch.clientX - this.touchStartX) > 10 || Math.abs(touch.clientY - this.touchStartY) > 10)) {
+            clearTimeout(this.longPressTimer);
+            this.longPressTimer = null;
+        }
+
         // Horizontal Movement
         if (Math.abs(dx) > this.touchThreshold) {
             const direction = dx > 0 ? 1 : -1;
@@ -434,7 +446,7 @@ class Game {
         }
 
         // Soft Drop (down swipe)
-        if (dy > this.touchThreshold * 1.5) {
+        if (dy > this.touchThreshold) { // Changed from touchThreshold * 1.5 to touchThreshold as per user's snippet
             this.movePiece(0, 1);
             this.lastTouchY = touch.clientY;
         }
@@ -443,14 +455,30 @@ class Game {
     handleTouchEnd(e) {
         if (!this.isPlaying) return;
         e.preventDefault();
-        const touch = e.changedTouches[0];
-        const dx = touch.clientX - this.touchStartX;
-        const dy = touch.clientY - this.touchStartY;
 
-        // Tap detection (minimal movement)
-        if (Math.abs(dx) < 10 && Math.abs(dy) < 10) {
-            this.rotatePiece();
+        // If timer is still running, it means we didn't hold long enough -> it's a TAP or SWIPE
+        if (this.longPressTimer) {
+            clearTimeout(this.longPressTimer);
+            this.longPressTimer = null;
+
+            // Calculate overall movement for Tap detection
+            const touch = e.changedTouches[0]; // Use changedTouches for end event
+            const dx = touch.clientX - this.touchStartX;
+            const dy = touch.clientY - this.touchStartY;
+
+            // Tap detection (minimal movement)
+            if (Math.abs(dx) < 10 && Math.abs(dy) < 10) {
+                this.rotatePiece();
+            }
         }
+    }
+
+    hardDrop() {
+        while (this.movePiece(0, 1)) {
+            // Keep moving down until collision
+            this.score += 2; // Bonus points for hard drop
+        }
+        this.updateUI(); // Changed from updateScore to updateUI
     }
 
     bindEvents() {
