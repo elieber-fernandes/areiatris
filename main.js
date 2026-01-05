@@ -497,47 +497,6 @@ class Game {
         this.canvas.addEventListener('touchstart', (e) => this.handleTouchStart(e), { passive: false });
         this.canvas.addEventListener('touchmove', (e) => this.handleTouchMove(e), { passive: false });
         this.canvas.addEventListener('touchend', (e) => this.handleTouchEnd(e), { passive: false });
-
-        // On-Screen Buttons with Continuous Press
-        const bindContinuousBtn = (id, action, intervalSpeed = 100) => {
-            const btn = document.getElementById(id);
-            if (btn) {
-                let interval;
-                const startAction = (e) => {
-                    if (e.cancelable) e.preventDefault();
-                    action(); // Trigger once immediately
-                    clearInterval(interval); // Safety clear
-                    interval = setInterval(action, intervalSpeed);
-                };
-                const stopAction = (e) => {
-                    if (e.cancelable) e.preventDefault();
-                    clearInterval(interval);
-                };
-
-                // Touch events
-                btn.addEventListener('touchstart', startAction, { passive: false });
-                btn.addEventListener('touchend', stopAction, { passive: false });
-
-                // Mouse events
-                btn.addEventListener('mousedown', startAction);
-                btn.addEventListener('mouseup', stopAction);
-                btn.addEventListener('mouseleave', stopAction);
-            }
-        };
-
-        // Simple tap for Rotate
-        const bindTapBtn = (id, action) => {
-            const btn = document.getElementById(id);
-            if (btn) {
-                btn.addEventListener('touchstart', (e) => { e.preventDefault(); action(); }, { passive: false });
-                btn.addEventListener('mousedown', (e) => { e.preventDefault(); action(); });
-            }
-        };
-
-        bindContinuousBtn('btn-left', () => this.movePiece(-1, 0), 100);
-        bindContinuousBtn('btn-right', () => this.movePiece(1, 0), 100);
-        bindContinuousBtn('btn-down', () => this.movePiece(0, 1), 50); // Faster drop
-        bindTapBtn('btn-rotate', () => this.rotatePiece());
     }
 
     loop() {
