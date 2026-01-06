@@ -65,7 +65,7 @@ class Game {
         this.currentColors = [];
 
         this.currentPiece = null;
-        this.nextPiece = null;
+        this.nextPieces = [];
 
         // Manipulação de Entrada
         this.keys = {};
@@ -101,7 +101,12 @@ class Game {
             this.currentColors = [...CONFIG.colors];
         }
 
-        this.nextPiece = this.generateRandomPiece(); // Gerar a primeira próxima peça
+        // Inicializar próximas peças (3 peças)
+        this.nextPieces = [];
+        for (let i = 0; i < 3; i++) {
+            this.nextPieces.push(this.generateRandomPiece());
+        }
+
         this.spawnPiece();
         this.updateUI();
         this.loop();
@@ -122,14 +127,16 @@ class Game {
     }
 
     spawnPiece() {
-        this.currentPiece = this.nextPiece;
+        // Pegar a primeira da fila
+        this.currentPiece = this.nextPieces.shift();
+
+        // Adicionar uma nova no final
+        this.nextPieces.push(this.generateRandomPiece());
 
         // Centralizar a nova peça
         this.currentPiece.x = Math.floor(CONFIG.cols / 2) - Math.floor(this.currentPiece.shape[0].length / 2);
         this.currentPiece.y = 0;
 
-        // Gerar nova próxima peça
-        this.nextPiece = this.generateRandomPiece();
         this.drawNextPiece();
 
         if (this.checkCollision(this.currentPiece.x, this.currentPiece.y)) {
@@ -142,25 +149,31 @@ class Game {
         this.nextCtx.fillStyle = '#000';
         this.nextCtx.fillRect(0, 0, this.nextCanvas.width, this.nextCanvas.height);
 
-        if (!this.nextPiece) return;
+        // Desenhar as 3 próximas peças
+        this.nextPieces.forEach((piece, index) => {
+            if (!piece) return;
 
-        // Calcular posição centralizada
-        const pieceWidth = this.nextPiece.shape[0].length * CONFIG.cellSize;
-        const pieceHeight = this.nextPiece.shape.length * CONFIG.cellSize;
-        const offsetX = (this.nextCanvas.width - pieceWidth) / 2;
-        const offsetY = (this.nextCanvas.height - pieceHeight) / 2;
+            // Calcular posição centralizada para cada slot
+            const pieceWidth = piece.shape[0].length * CONFIG.cellSize;
+            const pieceHeight = piece.shape.length * CONFIG.cellSize;
 
-        this.nextCtx.fillStyle = this.nextPiece.color;
-        this.nextPiece.shape.forEach((row, r) => {
-            row.forEach((val, c) => {
-                if (val) {
-                    this.nextCtx.fillRect(
-                        offsetX + c * CONFIG.cellSize,
-                        offsetY + r * CONFIG.cellSize,
-                        CONFIG.cellSize,
-                        CONFIG.cellSize
-                    );
-                }
+            // Espaçamento horizontal: 100px por slot (já que canvas tem 300px de largura)
+            const slotWidth = 100;
+            const offsetX = (index * slotWidth) + (slotWidth - pieceWidth) / 2;
+            const offsetY = (this.nextCanvas.height - pieceHeight) / 2;
+
+            this.nextCtx.fillStyle = piece.color;
+            piece.shape.forEach((row, r) => {
+                row.forEach((val, c) => {
+                    if (val) {
+                        this.nextCtx.fillRect(
+                            offsetX + c * CONFIG.cellSize,
+                            offsetY + r * CONFIG.cellSize,
+                            CONFIG.cellSize,
+                            CONFIG.cellSize
+                        );
+                    }
+                });
             });
         });
     }
