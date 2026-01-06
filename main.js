@@ -77,7 +77,7 @@ class Game {
         this.touchStartY = 0;
         this.lastTouchX = 0;
         this.lastTouchY = 0;
-        this.touchThreshold = 10; // Increased sensitivity (lower value = more sensitive)
+        this.touchThreshold = 5; // Increased sensitivity (lower value = more sensitive)
 
         this.bindEvents();
     }
@@ -504,20 +504,20 @@ class Game {
 
         // Touch Listeners on Document (Full Screen Control)
         document.addEventListener('touchstart', (e) => {
-            // Only handle game touches if target is not a button
-            if (e.target.tagName !== 'BUTTON' && this.isPlaying) {
+            // Only handle game touches if target is not a button or link
+            if (!e.target.closest('button') && !e.target.closest('a') && this.isPlaying) {
                 this.handleTouchStart(e);
             }
         }, { passive: false });
 
         document.addEventListener('touchmove', (e) => {
-            if (this.isPlaying) {
+            if (!e.target.closest('button') && !e.target.closest('a') && this.isPlaying) {
                 this.handleTouchMove(e);
             }
         }, { passive: false });
 
         document.addEventListener('touchend', (e) => {
-            if (this.isPlaying) {
+            if (!e.target.closest('button') && !e.target.closest('a') && this.isPlaying) {
                 this.handleTouchEnd(e);
             }
         }, { passive: false });
