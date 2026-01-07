@@ -153,20 +153,20 @@ h1 {
 .mute-btn {
     position: fixed;
     /* Fixado na tela, não no container */
-    top: 20px;
-    right: 20px;
+    top: 10px;
+    right: 10px;
     background: rgba(0, 0, 0, 0.5);
     border: 1px solid #444;
     color: white;
-    font-size: 24px;
-    padding: 10px;
+    font-size: 12px;
+    padding: 0;
     border-radius: 50%;
     /* Redondo */
     cursor: pointer;
     z-index: 1000;
     /* Acima de tudo */
-    width: 50px;
-    height: 50px;
+    width: 20px;
+    height: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
